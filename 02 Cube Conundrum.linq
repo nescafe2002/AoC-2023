@@ -10,10 +10,7 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green".Split("\r\n");
 
 lines = File.ReadAllLines("02 input.txt");
 
-var data =
-  from l in lines
-  let g = l.Split(": ")
-  select (Game: int.Parse(g[0].Split(' ')[1]), Draws: g[1].Split("; ").Select(y => y.Split(", ").Select(z => z.Split(' ')).Select(z => (Count: int.Parse(z[0]), Color: z[1])).ToArray()).ToArray());
+var data = lines.Select(x => x.Split(": ")).Select(x => (Game: int.Parse(x[0].Split(' ')[1]), Draws: x[1].Split("; ").SelectMany(y => y.Split(", ").Select(z => z.Split(' ')).Select(z => (Count: int.Parse(z[0]), Color: z[1])).ToArray()).ToArray()));
 
 var constraints = new Dictionary<string, int>{
   {"red", 12},
@@ -21,6 +18,6 @@ var constraints = new Dictionary<string, int>{
   {"blue", 14},
 };
 
-data.Where(x => x.Draws.All(y => y.All(z => !constraints.TryGetValue(z.Color, out var w) || z.Count <= w))).Sum(x => x.Game).Dump("Answer 1");
+data.Where(x => x.Draws.All(y => !constraints.TryGetValue(y.Color, out var w) || y.Count <= w)).Sum(x => x.Game).Dump("Answer 1");
 
-data.Select(x => x.Draws.SelectMany(y => y).GroupBy(y => y.Color, y => y.Count).Select(y => y.Max())).Select(x => x.Aggregate((y, z) => y * z)).Sum().Dump("Answer 2");
+data.Select(x => x.Draws.GroupBy(y => y.Color, y => y.Count).Select(y => y.Max())).Select(x => x.Aggregate((y, z) => y * z)).Sum().Dump("Answer 2");
