@@ -11,7 +11,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11".Split("\r\n");
 
 input = File.ReadAllLines("04 input.txt");
 
-var cards = input.Select(x => x.Split(": ")[1].Split(" | ")).Select(x => x[0].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse).Intersect(x[1].Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)).Count()).ToArray();
+var cards = input.Select(x => x.Split(": ")[1].Split(" | ").Select(x => x.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(int.Parse)).ToArray()).Select(x => x[0].Intersect(x[1]).Count()).ToArray();
 
 cards.Where(x => x > 0).Sum(x => Math.Pow(2, x - 1)).Dump("Answer 1");
 
